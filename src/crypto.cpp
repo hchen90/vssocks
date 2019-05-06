@@ -21,7 +21,10 @@
 #include "config.h"
 #include "crypto.h"
 
-Crypto::Crypto() : ci(NULL), iv_len(0), okay(false), pri_rsa(NULL), pub_rsa(NULL) {}
+Crypto::Crypto() : ctx(NULL), ci(NULL), iv_len(0), okay(false), pri_rsa(NULL), pub_rsa(NULL)
+{
+  ctx = EVP_CIPHER_CTX_new();
+}
 
 Crypto::Crypto(const Crypto& co) : Crypto()
 {
@@ -33,15 +36,14 @@ Crypto::Crypto(const Crypto& co) : Crypto()
 
 Crypto::~Crypto()
 {
+  if (ctx != NULL) EVP_CIPHER_CTX_free(ctx);
   if (pri_rsa != NULL) RSA_free(pri_rsa);
   if (pub_rsa != NULL) RSA_free(pub_rsa); 
 }
 
 bool Crypto::encode(Buffer& res, const void* ptr, size_t len, bool enc)
 {
-  EVP_CIPHER_CTX* ctx = NULL; bool ret = false;
-
-  if ((ctx = EVP_CIPHER_CTX_new()) != NULL && ptr != NULL && len > 0 && ci != NULL && res.alloc(len + 2)) {
+  if (ptr != NULL && len > 0 && ci != NULL && res.alloc(len + 2)) {
     unsigned char* p = (unsigned char*) res.ptr(),* x = (unsigned char*) ptr;
     int n = 0, m = MIN(BUFF_SIZE, len);
     ssize_t l = len, k = 0;
@@ -65,13 +67,11 @@ bool Crypto::encode(Buffer& res, const void* ptr, size_t len, bool enc)
 
       res.resize(k);
 
-      ret = k > 0;
+      return k > 0;
     }
   }
 
-  if (ctx != NULL) EVP_CIPHER_CTX_free(ctx);
-
-  return ret;
+  return false;
 }
 
 bool Crypto::decode(Buffer& res, const void* ptr, size_t len)

@@ -47,6 +47,7 @@ public:
 private:
   pair<unsigned char*, size_t> lzss_search_maxpat(unsigned char* head, unsigned char* tail, unsigned char* end);
 
+  EVP_CIPHER_CTX* ctx;
   const EVP_CIPHER* ci;
 
   unsigned char key[64]; /*big key buffer is harmless*/
