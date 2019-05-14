@@ -356,7 +356,6 @@ void* Peer::start_client(void* args)
     return args;
   }
 
-  //while ((len = tags->peer->server_srv.recv(tags->soc, res.ptr(), res.capacity())) > 0) {
   while ((len = utils::recvall(res, tags->soc)) > 0) {
     if (user != NULL && user->decode(txt, res.ptr(), len, tags->id)) {
       ptr = (char*) txt.ptr(); len = txt.size();
@@ -439,7 +438,6 @@ int Peer::stage_init(char* ptr, size_t len, User* user, int soc, pthread_t id)
       p = (char*) xtx.ptr(); l = xtx.size();
     }
     
-    //server_srv.send(soc, p, l);
     utils::sendall(p, l, soc);
   }
 
@@ -500,7 +498,6 @@ int Peer::stage_auth(char* ptr, size_t len, User* user, int soc, pthread_t id)
       p = (char*) xtx.ptr(); l = xtx.size();
     }
 
-    //server_srv.send(soc, p, l);
     utils::sendall(p, l, soc);
   }
 
@@ -608,7 +605,6 @@ int Peer::stage_strm_connect(User* user, int soc, Socks* target, pthread_t id)
 
     int     in  = FD_ISSET(fd, &fds) ? fd : soc;
     int     out = in == fd ? soc : fd;
-    //ssize_t len = server_srv.recv(in, res.ptr(), res.capacity());
     char*   ptr = (char*) res.ptr();
     ssize_t len;
 
@@ -634,7 +630,6 @@ int Peer::stage_strm_connect(User* user, int soc, Socks* target, pthread_t id)
 
     if (len <= 0) return 2;
 
-    //server_srv.send(out, ptr, len);
     if (out == soc) {
       if (utils::sendall(ptr, len, out) <= 0) return 2;
     } else {

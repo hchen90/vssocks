@@ -37,7 +37,6 @@ ssize_t std::send_status(User* user, int soc, char status, pthread_t id)
     }
   }
 
-  //return send(soc, ptr, len, 0);
   return utils::sendall(ptr, len, soc);
 }
 

@@ -129,11 +129,6 @@ bool Crypto::set_password(const string& password, unsigned char* key, unsigned c
   return false;
 }
 
-const string& Crypto::get_password(void) const
-{
-  return this->password;
-}
-
 bool Crypto::lzss_encode(Buffer& res, const void* ptr, size_t len)
 {
   size_t size = 0;

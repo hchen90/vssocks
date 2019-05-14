@@ -71,49 +71,54 @@ User::User(const User& user) : User(user.username, user.userinfo) {}
 
 bool User::encode(Buffer& res, const void* ptr, size_t len, pthread_t id)
 {
+  bool ret = true;
+
+  Buffer lzss;
+
+  if (tags & USER_COMPRESS) { // compress data if it's enabled
+    if (Crypto::lzss_encode(lzss, ptr, len)) {
+      ptr = lzss.ptr(); len = lzss.size();
+    } else {
+      ret = false;
+    }
+  }
+
+  if (! ret) return false;
+
   res.reset();
-  //res.app(ptr, len); return true;
-  //xstring str;
-  //str.printf("[%08x] \033[36mencode - ptr:%p, len:%u\033[0m", id, ptr, len);
-  //log::dump(str, ptr, 16);
-  //res.app(ptr, len); return true;
-  /*res.reset(); res.app(ptr, len);
-  res.alloc(len); char* p = (char*) res.ptr();
-  for (size_t i = 0; i < len; i++) p[i] = (*(char*) ((char*) ptr + i)) ^ 0x66;
-  res.resize(len);*/
-  //xstring xs;
-  //xs.printf("\033[;1mEN\033[0m:\033[43mlen:%4u\033[0m", len);
-  //log::dump(xs, ptr, 16);
-  bool rev = Crypto::encode(res, ptr, len);
-  //xs.printf("\033[44mres.size():%4u\033[0m", res.size());
-  //log::dump(xs, res.ptr(), 16);
-  //log::info(xs);
-  //str.printf("\033[36msize:%u\033[0m", res.size());
-  //log::echo(str);
-  return rev;
+
+  if (ciphername == "rsa") {
+    return Crypto::rsa_encode(res, ptr, len, true); // encrypt data with RSA
+  } else {
+    return Crypto::encode(res, ptr, len); // encrypt data
+  }
 }
 
 bool User::decode(Buffer& res, const void* ptr, size_t len, pthread_t id)
 {
-  res.reset();
-  //res.app(ptr, len); return true;
-  /*res.reset(); res.app(ptr, len);
-  res.alloc(len); char* p = (char*) res.ptr();
-  for (size_t i = 0; i < len; i++) p[i] = (*(char*) ((char*) ptr + i)) ^ 0x66;
-  res.resize(len);*/
-  //xstring xs;
-  //xs.printf("\033[;1mDE\033[0m:\033[45mlen:%4u\033[0m", len);
-  //log::dump(xs, ptr, 16);
-  bool rev = Crypto::decode(res, ptr, len);
-  //xs.printf("\033[46mres.size():%4u\033[0m", res.size());
-  //log::dump(xs, res.ptr(), 16);
-  //log::info(xs);
-  /*xstring str;
-  str.printf("[%08x] \033[35mdecode - len: %u - ptr:%p, size:%u\033[0m", id, len, res.ptr(), res.size());
-  log::dump(str, res.ptr(), 16);
-  log::echo(str);*/
+  bool ret = false;
 
-  return rev;
+  res.reset();
+
+  // decrypt data
+  if (ciphername == "rsa") {
+    ret = Crypto::rsa_decode(res, ptr, len, true);
+  } else {
+    ret = Crypto::decode(res, ptr, len);
+  }
+
+  if (ret && tags & USER_COMPRESS) {
+    Buffer lzss;
+
+    // decompress data
+    if (Crypto::lzss_decode(lzss, res.ptr(), res.size())) {
+      res = lzss;
+    } else {
+      ret = false;
+    }
+  }
+
+  return ret;
 }
 
 bool User::get_info(int lev, char* buf, size_t len)
@@ -144,6 +149,11 @@ const string& User::get_ciphername(void) const
   return ciphername;
 }
 
+const string& User::get_password(void) const
+{
+  return password;
+}
+
 const string& User::get_keyfile(void) const
 {
   return keyfile;
@@ -164,9 +174,14 @@ void User::set_compress(bool comp)
   compress = comp;
 }
 
-void User::set_ciphername(const string& meth)
+void User::set_ciphername(const string& ciphername)
 {
-  Crypto::set_ciphername(ciphername = meth);
+  Crypto::set_ciphername(this->ciphername = ciphername);
+}
+
+void User::set_password(const string& password)
+{
+  Crypto::set_password(this->password = password);
 }
 
 void User::set_keyfile(const string& keyfile, bool pri)

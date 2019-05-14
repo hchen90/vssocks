@@ -33,8 +33,6 @@ public:
   bool set_ciphername(const string& ciphername);
   bool set_password(const string& password, unsigned char* key = NULL, unsigned char* iv = NULL, unsigned short* iv_len = NULL);
 
-  const string& get_password(void) const;
-
   bool lzss_encode(Buffer& res, const void* ptr, size_t len);
   bool lzss_decode(Buffer& res, const void* ptr, size_t len);
 

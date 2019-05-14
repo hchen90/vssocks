@@ -28,18 +28,19 @@ public:
   const string& get_username(void) const;
   bool          get_compress(void) const;
   const string& get_ciphername(void) const;
+  const string& get_password(void) const;
   const string& get_keyfile(void) const;
   size_t        get_bandwidth(void) const;
   time_t        get_expiration(void) const;
 
   void set_compress(bool comp);
-  void set_ciphername(const string& meth);
+  void set_ciphername(const string& ciphername);
+  void set_password(const string& password);
   void set_keyfile(const string& keyfile, bool pri);
   void set_bandwidth(size_t bawi);
   void set_expiration(time_t expi);
 
   bool valid(void);
-
 private:
   string  username;
   string  userinfo;
@@ -47,6 +48,7 @@ private:
   int     tags;
   bool    compress;
   string  ciphername;
+  string  password;
   string  keyfile;
   size_t  bandwidth;
   time_t  expiration;
