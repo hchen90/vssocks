@@ -39,6 +39,7 @@ struct ThreadArgs {
   } cli;
   Socks*  target;
   User*   user;
+  pthread_t id;
 };
 
 Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), okay(false), timeout(20.), status(INIT_UNDEF)
@@ -159,8 +160,10 @@ void Peer::run(void)
     .peer = this
   };
 
+  pthread_t id;
+
   // start thread for server_srv
-  if (threads.create_thread(Peer::start, &args)) {
+  if (threads.create_thread(Peer::start, &args, id)) {
     log::erro("Peer:run:create_thread(0)");
   }
 
@@ -170,7 +173,7 @@ void Peer::run(void)
   };
 
   // start thread for recver_srv
-  if (threads.create_thread(Peer::start, &argz)) {
+  if (threads.create_thread(Peer::start, &argz, id)) {
     log::erro("Peer:run:create_thread(1)");
   }
 
@@ -307,7 +310,7 @@ void* Peer::start(void* args)
           tags->done = false;
           tags->target = NULL;
           tags->user = new User(*tags->peer->defuser);
-          threads.create_thread(Peer::start_client, tags);
+          threads.create_thread(Peer::start_client, tags, tags->id);
         }
       }
     }
@@ -353,28 +356,29 @@ void* Peer::start_client(void* args)
     return args;
   }
 
-  while ((len = tags->peer->server_srv.recv(tags->soc, res.ptr(), res.capacity())) > 0) {
-    if (user != NULL && user->decode(txt, res.ptr(), len)) {
+  //while ((len = tags->peer->server_srv.recv(tags->soc, res.ptr(), res.capacity())) > 0) {
+  while ((len = utils::recvall(res, tags->soc)) > 0) {
+    if (user != NULL && user->decode(txt, res.ptr(), len, tags->id)) {
       ptr = (char*) txt.ptr(); len = txt.size();
     } else {
       ptr = (char*) res.ptr();
     }
     switch (stage) {
       case STAGE_INIT:
-        ret = tags->peer->stage_init(ptr, len, user, tags->soc);
+        ret = tags->peer->stage_init(ptr, len, user, tags->soc, tags->id);
         if (ret == SOCKSV5_METHOD_NOAUTH) stage = STAGE_REQU;
         else if (ret == SOCKSV5_METHOD_USRPASS) stage = STAGE_AUTH;
         else stage = STAGE_FINISH; // only support NOAUTH and USRPASS
         break;
       case STAGE_AUTH:
-        ret = tags->peer->stage_auth(ptr, len, user, tags->soc); // authentication
+        ret = tags->peer->stage_auth(ptr, len, user, tags->soc, tags->id); // authentication
         if (ret == SOCKSV5_SUCCESS) stage = STAGE_REQU;
         stage = STAGE_FINISH;
         break;
       case STAGE_REQU:
-        ret = tags->peer->stage_requ(ptr, len, user, tags->soc, tags->target, from_ipp); // request
+        ret = tags->peer->stage_requ(ptr, len, user, tags->soc, tags->target, from_ipp, tags->id); // request
         if (ret == SOCKSV5_CMD_CONNECT) {
-          tags->peer->stage_strm_connect(user, tags->soc, tags->target);
+          tags->peer->stage_strm_connect(user, tags->soc, tags->target, tags->id);
         } else if (ret == SOCKSV5_CMD_BIND) {
           tags->peer->stage_strm_bind(user, tags->soc, tags->target);
         } else if (ret == SOCKSV5_CMD_UDP) {
@@ -405,7 +409,7 @@ void Peer::cleanup_client(void* args)
   }
 }
 
-int Peer::stage_init(char* ptr, size_t len, User* user, int soc)
+int Peer::stage_init(char* ptr, size_t len, User* user, int soc, pthread_t id)
 {
   /* format: [VERSION][LAUTH][AUTH] ~ [1][1][1-255] */
   int     rev = 0;
@@ -431,17 +435,18 @@ int Peer::stage_init(char* ptr, size_t len, User* user, int soc)
     char*   p = buf;
     size_t  l = sizeof(buf);
 
-    if (user != NULL && user->encode(xtx, p, l)) {
+    if (user != NULL && user->encode(xtx, p, l, id)) {
       p = (char*) xtx.ptr(); l = xtx.size();
     }
     
-    server_srv.send(soc, p, l);
+    //server_srv.send(soc, p, l);
+    utils::sendall(p, l, soc);
   }
 
   return rev;
 }
 
-int Peer::stage_auth(char* ptr, size_t len, User* user, int soc)
+int Peer::stage_auth(char* ptr, size_t len, User* user, int soc, pthread_t id)
 {
   /* format:
    * [VERSION][LNAME][NAME][LPASSWD][PASSWD] ~ [1][1][1-255][1][1-255]
@@ -491,17 +496,18 @@ int Peer::stage_auth(char* ptr, size_t len, User* user, int soc)
     char*   p = buf;
     size_t  l = sizeof(buf);
 
-    if (user != NULL && user->encode(xtx, p, l)) {
+    if (user != NULL && user->encode(xtx, p, l, id)) {
       p = (char*) xtx.ptr(); l = xtx.size();
     }
 
-    server_srv.send(soc, p, l);
+    //server_srv.send(soc, p, l);
+    utils::sendall(p, l, soc);
   }
 
   return rev;
 }
 
-int Peer::stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target, const string& from_ipp)
+int Peer::stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target, const string& from_ipp, pthread_t id)
 {
   /* format:
    * [VERSION][CMD][RSV][ATYP][BIND.ADDR][BIND.PORT] ~ [1][1][1][1][1-256][2]
@@ -545,11 +551,11 @@ int Peer::stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target,
       if (cli != NULL) {
         if (cli->connect(hostip, port)) {
           target = cli; rev = cmd;
-          send_status(user, soc, SOCKSV5_REP_SUCCESS);
+          send_status(user, soc, SOCKSV5_REP_SUCCESS, id);
           msg.printf(":[%s] connected to [%s:%u]", from_ipp.c_str(), hostip.c_str(), (unsigned int) port);
         } else {
           delete cli;
-          send_status(user, soc, SOCKSV5_REP_ERROR);
+          send_status(user, soc, SOCKSV5_REP_ERROR, id);
           msg.printf(":[%s] cannot connect to [%s:%u]", from_ipp.c_str(), hostip.c_str(), (unsigned int) port);
         }
       }
@@ -568,7 +574,7 @@ int Peer::stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target,
 }
 
 // soc - user's client side, target - remote target host
-int Peer::stage_strm_connect(User* user, int soc, Socks* target)
+int Peer::stage_strm_connect(User* user, int soc, Socks* target, pthread_t id)
 {
   Buffer  res, dat;
   int     fd = target->socket();
@@ -593,7 +599,7 @@ int Peer::stage_strm_connect(User* user, int soc, Socks* target)
 
     switch (select(MAX(fd, soc) + 1, &fds, NULL, NULL, &tmv)) {
       case 0: // timeout
-        send_status(user, soc, SOCKSV5_REP_TTLEXPI);
+        send_status(user, soc, SOCKSV5_REP_TTLEXPI, id);
         return 1;
       case -1: // error
         if (errno == EINTR) continue;
@@ -602,18 +608,25 @@ int Peer::stage_strm_connect(User* user, int soc, Socks* target)
 
     int     in  = FD_ISSET(fd, &fds) ? fd : soc;
     int     out = in == fd ? soc : fd;
-    ssize_t len = server_srv.recv(in, res.ptr(), res.capacity());
+    //ssize_t len = server_srv.recv(in, res.ptr(), res.capacity());
     char*   ptr = (char*) res.ptr();
+    ssize_t len;
+
+    if (in == soc) {
+      len = utils::recvall(res, in);
+    } else {
+      len = server_srv.recv(in, res.ptr(), res.capacity());
+    }
 
     if (len <= 0) return 2;
 
     if (user != NULL) {
       if (in == soc) { // from user's client
-        if (user->decode(dat, ptr, len)) {
+        if (user->decode(dat, ptr, len, id)) {
           ptr = (char*) dat.ptr(); len = dat.size();
         }
       } else if (out == soc) { // data need to encrypted before send it out
-        if (user->encode(dat, ptr, len)) {
+        if (user->encode(dat, ptr, len, id)) {
           ptr = (char*) dat.ptr(); len = dat.size();
         }
       }
@@ -621,17 +634,12 @@ int Peer::stage_strm_connect(User* user, int soc, Socks* target)
 
     if (len <= 0) return 2;
 
-    server_srv.send(out, ptr, len);
-    /*
-    ssize_t sent = 0;
-
-    while (sent < len) {
-      to = server_srv.send(out, ptr + sent, len - sent);
-      if (to <= 0) break;
-      sent += to;
-    }*/
-
-    // if (sent == 0) return 2;
+    //server_srv.send(out, ptr, len);
+    if (out == soc) {
+      if (utils::sendall(ptr, len, out) <= 0) return 2;
+    } else {
+      if (server_srv.send(out, ptr, len) <= 0) return 2;
+    }
   }
   
   return 0;

@@ -69,9 +69,13 @@ User::User(const string& usrnam, const string& usrnfo) : tags(0), compress(false
 
 User::User(const User& user) : User(user.username, user.userinfo) {}
 
-bool User::encode(Buffer& res, const void* ptr, size_t len)
+bool User::encode(Buffer& res, const void* ptr, size_t len, pthread_t id)
 {
   res.reset();
+  //res.app(ptr, len); return true;
+  //xstring str;
+  //str.printf("[%08x] \033[36mencode - ptr:%p, len:%u\033[0m", id, ptr, len);
+  //log::dump(str, ptr, 16);
   //res.app(ptr, len); return true;
   /*res.reset(); res.app(ptr, len);
   res.alloc(len); char* p = (char*) res.ptr();
@@ -84,10 +88,12 @@ bool User::encode(Buffer& res, const void* ptr, size_t len)
   //xs.printf("\033[44mres.size():%4u\033[0m", res.size());
   //log::dump(xs, res.ptr(), 16);
   //log::info(xs);
+  //str.printf("\033[36msize:%u\033[0m", res.size());
+  //log::echo(str);
   return rev;
 }
 
-bool User::decode(Buffer& res, const void* ptr, size_t len)
+bool User::decode(Buffer& res, const void* ptr, size_t len, pthread_t id)
 {
   res.reset();
   //res.app(ptr, len); return true;
@@ -102,6 +108,11 @@ bool User::decode(Buffer& res, const void* ptr, size_t len)
   //xs.printf("\033[46mres.size():%4u\033[0m", res.size());
   //log::dump(xs, res.ptr(), 16);
   //log::info(xs);
+  /*xstring str;
+  str.printf("[%08x] \033[35mdecode - len: %u - ptr:%p, size:%u\033[0m", id, len, res.ptr(), res.size());
+  log::dump(str, res.ptr(), 16);
+  log::echo(str);*/
+
   return rev;
 }
 

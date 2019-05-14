@@ -20,8 +20,8 @@ public:
   User(const string& name, const string& usrnfo);
   User(const User& user);
 
-  bool encode(Buffer& res, const void* ptr, size_t len); // will remove it soon
-  bool decode(Buffer& res, const void* ptr, size_t len); // wiil remove it soon
+  bool encode(Buffer& res, const void* ptr, size_t len, pthread_t id);
+  bool decode(Buffer& res, const void* ptr, size_t len, pthread_t id);
 
   bool get_info(int lev, char* buf, size_t len);
 

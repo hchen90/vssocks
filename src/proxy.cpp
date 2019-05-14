@@ -38,6 +38,7 @@ struct ThreadArgs {
   Client* srv;
   string  hostip;
   int     port;
+  pthread_t id;
 };
 
 Proxy::Proxy(const string& conf) : Configuration(conf.c_str()), user(NULL), okay(false), timeout(20.), server_port(0)
@@ -149,7 +150,7 @@ void Proxy::run(void)
           tags->srv = new Client();
           tags->hostip = hostip;
           tags->port = port;
-          threads.create_thread(Proxy::start_client, tags);
+          threads.create_thread(Proxy::start_client, tags, tags->id);
         }
       }
     }
@@ -209,7 +210,11 @@ void* Proxy::start_client(void* args)
   pthread_cleanup_push(Proxy::cleanup_client, args);
 
   if (tags->srv->connect(tags->pxy->server_ip, tags->pxy->server_port)) {
-    tags->pxy->local_read(tags->srv, tags->soc, tags->srv->socket());
+    User* user = new User(*tags->pxy->user);
+    if (user != NULL) {
+      tags->pxy->local_read(user, tags->srv, tags->soc, tags->srv->socket(), tags->id);
+      delete user;
+    }
   } else {
     xstring msg = "Proxy:start_client:cannot connect to [";
     msg.printf("%s:%u]", tags->hostip.c_str(), tags->port);
@@ -225,7 +230,7 @@ void* Proxy::start_client(void* args)
   return args;
 }
 
-void Proxy::local_read(Client* srv, int fd1, int fd2) // fd1 - local client, fd2 - remote server
+void Proxy::local_read(User* user, Client* srv, int fd1, int fd2, pthread_t id) // fd1 - local client, fd2 - remote server
 {
   fd_set fdsc, fds;
 
@@ -235,7 +240,9 @@ void Proxy::local_read(Client* srv, int fd1, int fd2) // fd1 - local client, fd2
 
   Buffer res, dat;
 
-  while (true) {
+  bool okay = true;
+
+  while (okay) {
     res.reset();
     dat.reset();
 
@@ -249,32 +256,46 @@ void Proxy::local_read(Client* srv, int fd1, int fd2) // fd1 - local client, fd2
 
     switch (select(MAX(fd1, fd2) + 1, &fds, NULL, NULL, &tm)) {
       case 0: // timeout
+        okay = false;
         break;
       case -1: // error
         if (errno == EINTR) continue;
         break;
     }
 
+    if (! okay) break;
+
     int     in  = FD_ISSET(fd1, &fds) ? fd1 : fd2;
     int     out = in == fd1 ? fd2 : fd1;
-    ssize_t len = local.recv(in, res.ptr(), res.capacity());
     char*   ptr = (char*) res.ptr();
+    ssize_t len;
+
+    if (in == fd2) {
+      len = utils::recvall(res, in);
+    } else {
+      len = local.recv(in, res.ptr(), res.capacity());
+    }
 
     if (len <= 0) break;
 
     if (user != NULL) {
       if (in == fd2) { // if data received from remote server
-        if (user->decode(dat, ptr, len)) {
+        if (user->decode(dat, ptr, len, id)) {
           ptr = (char*) dat.ptr(); len = dat.size();
         }
-      } else if (out == fd2) { // send data to remote server
-        if (user->encode(dat, ptr, len)) {
+      }
+      if (out == fd2) { // send data to remote server
+        if (user->encode(dat, ptr, len, id)) {
           ptr = (char*) dat.ptr(); len = dat.size();
         }
       }
     }
 
-    local.send(out, ptr, len);
+    if (out == fd2) {
+      utils::sendall(ptr, len, out);
+    } else {
+      local.send(out, ptr, len);
+    }
 
     /*ssize_t sent = 0;
 

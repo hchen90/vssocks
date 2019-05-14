@@ -44,7 +44,7 @@
 #define STAGE_FINISH 3
 
 namespace std {
-  ssize_t send_status(User* user, int soc, char status);
+  ssize_t send_status(User* user, int soc, char status, pthread_t id);
 };
 
 #endif	/* _SOCKSV5_H_ */

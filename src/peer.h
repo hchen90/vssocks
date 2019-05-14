@@ -55,10 +55,10 @@ private:
 
   void enter_loop(void);
 
-  int stage_init(char* ptr, size_t len, User* user, int soc);
-  int stage_auth(char* ptr, size_t len, User* user, int soc);
-  int stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target, const string& from_ipp);
-  int stage_strm_connect(User* user, int soc, Socks* target);
+  int stage_init(char* ptr, size_t len, User* user, int soc, pthread_t id);
+  int stage_auth(char* ptr, size_t len, User* user, int soc, pthread_t id);
+  int stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target, const string& from_ipp, pthread_t id);
+  int stage_strm_connect(User* user, int soc, Socks* target, pthread_t id);
   int stage_strm_bind(User* user, int soc, Socks* target);
   int stage_strm_udp(User* user, int soc, Socks* target);
 

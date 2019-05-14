@@ -16,12 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  * ***/
-#include <sys/socket.h>
-
 #include "buffer.h"
 #include "socksv5.h"
+#include "utils.h"
 
-ssize_t std::send_status(User* user, int soc, char status)
+ssize_t std::send_status(User* user, int soc, char status, pthread_t id)
 {
   char buf[10] = {
     SOCKSV5_VER, status, 0, SOCKSV5_ATYP_IPV4, 0,0,0,0, 0,0
@@ -32,13 +31,14 @@ ssize_t std::send_status(User* user, int soc, char status)
   size_t len = sizeof(buf);
 
   if (user != NULL) {
-    if (user->encode(res, ptr, len)) {
+    if (user->encode(res, ptr, len, id)) {
       ptr = (char*) res.ptr();
       len = res.size();
     }
   }
 
-  return send(soc, ptr, len, 0);
+  //return send(soc, ptr, len, 0);
+  return utils::sendall(ptr, len, soc);
 }
 
 /*end*/

@@ -20,9 +20,13 @@
 #include <cstring>
 
 #include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/socket.h>
 
 #include "config.h"
 #include "utils.h"
+#include "xstring.h"
 
 /*namespace: utils*/
 
@@ -176,6 +180,57 @@ bool utils::gethostnameport(const string& host, string& hostip, int& port)
   }
 
   return false;
+}
+
+ssize_t utils::recvall(Buffer& res, int soc)
+{
+  if (soc == -1) return -1;
+
+  //return recv(soc, res.ptr(), res.capacity(), 0);
+
+  short len = 0;
+
+  // block length (size: 2 bytes)
+  ssize_t rcved = recv(soc, (char*) &len, sizeof(len), 0);
+
+  //xstring a; a.printf("\033[43mlen: %d\033[0m", len); log::info(a);
+  if (len > 0) {
+    res.alloc(len);
+    res.reset();
+
+    // block data (size: variable)
+    return recv(soc, res.ptr(), len, 0);
+  }
+
+  return -1;
+}
+
+ssize_t utils::sendall(const void* ptr, size_t len, int soc)
+{
+  if (soc == -1) return -1;
+
+  //return send(soc, ptr, len, 0);
+
+  short bs = (short) len;
+
+  // block size
+  //xstring a; a.printf("\033[42mlen: %d\033[0m", bs); log::info(a);
+  if (send(soc, (char*) &bs, sizeof(bs), 0) > 0) {
+    // block data
+    return send(soc, ptr, len, 0);
+  }
+  
+  return -1;
+}
+
+void utils::setnonblock(int soc, bool nb)
+{
+  if (soc > 0) {
+    int flags = fcntl(soc, F_GETFL, 0);
+    if (nb) flags |= O_NONBLOCK;
+    else flags &= ~O_NONBLOCK;
+    fcntl(soc, F_SETFL, flags);
+  }
 }
 
 /*namespace: log*/

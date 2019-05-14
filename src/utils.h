@@ -25,6 +25,9 @@ namespace utils {
   char*   genramstr(char* buf, size_t len);
   size_t  atocap(const char* buf, size_t len);
   bool    gethostnameport(const string& host, string& hostip, int& port);
+  ssize_t recvall(Buffer& res, int soc);
+  ssize_t sendall(const void* ptr, size_t len, int soc);
+  void    setnonblock(int soc, bool nb = true);
 };
 
 namespace log {

@@ -83,7 +83,6 @@ int main(int argc, char* argv[])
   if (cfg.empty()) {
     usage();
   } else {
-    signal(SIGABRT, sighder);
     signal(SIGINT,  sighder);
     signal(SIGPIPE, SIG_IGN);
 

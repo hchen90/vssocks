@@ -19,14 +19,14 @@ public:
   Thread();
   ~Thread();
 
-  int     create_thread(void* (* start_routine)(void*), void* args);
+  int     create_thread(void* (* start_routine)(void*), void* args, pthread_t& id);
   void    kill_threads(void);
   void    kill_thread(pthread_t td);
   void    join_threads(void);
   void    join_thread(pthread_t td);
   size_t  threads_count(void);
   pair<pthread_t, void*>  thread_get(size_t index);
-  void    thread_del(pthread_t td);
+  void    thread_del(pthread_t td, bool kill);
 private:
   int     status;
   pthread_attr_t attr;

@@ -37,7 +37,7 @@ Thread::~Thread()
   }
 }
 
-int Thread::create_thread(void* (*start_routine)(void*), void* args)
+int Thread::create_thread(void* (*start_routine)(void*), void* args, pthread_t& id)
 {
   if (status) return -1;
 
@@ -47,7 +47,7 @@ int Thread::create_thread(void* (*start_routine)(void*), void* args)
   pthread_t pid;
 
   if (! (rev = pthread_create(&pid, &attr, start_routine, args))) {
-    pt_map.insert(make_pair(pid, args));
+    pt_map.insert(make_pair(id = pid, args));
   }
 
   return rev;
@@ -55,23 +55,23 @@ int Thread::create_thread(void* (*start_routine)(void*), void* args)
 
 void Thread::kill_threads(void)
 {
-  map<pthread_t, void*>::iterator it, end;
+  map<pthread_t, void*>::iterator it, end = pt_map.end();
   
-  for (it = pt_map.begin(), end = pt_map.end(); it != end; it++) {
+  while ((it = pt_map.begin()) != end) {
     kill_thread(it->first);
   }
 }
 
 void Thread::kill_thread(pthread_t td)
 {
-  thread_del(td);
+  thread_del(td, true);
 }
 
 void Thread::join_threads(void)
 {
-  map<pthread_t, void*>::iterator it;
+  map<pthread_t, void*>::iterator it, end = pt_map.end();
 
-  for (it = pt_map.begin(); it != pt_map.end(); it++) {
+  while ((it = pt_map.begin()) != end) {
     join_thread(it->first);
   }
 }
@@ -81,7 +81,7 @@ void Thread::join_thread(pthread_t td)
   void* result = NULL;
 
   pthread_join(td, &result);
-  thread_del(td);
+  thread_del(td, false);
 }
 
 size_t Thread::threads_count(void)
@@ -102,12 +102,12 @@ pair<pthread_t, void*> Thread::thread_get(size_t index)
   }
 }
 
-void Thread::thread_del(pthread_t td)
+void Thread::thread_del(pthread_t td, bool kill)
 {
   map<pthread_t, void*>::iterator it = pt_map.find(td);
 
   if (it != pt_map.end()) {
-    pthread_kill(td, 0);
+    if (kill) pthread_kill(td, 0);
     pt_map.erase(it);
   }
 }

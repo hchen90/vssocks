@@ -40,7 +40,7 @@ private:
   static void cleanup_client(void* args);
   static void* start_client(void* args);
   
-  void local_read(Client* srv, int fd1, int fd2);
+  void local_read(User* user, Client* srv, int fd1, int fd2, pthread_t id);
   
   Server  local;
   User*   user;
