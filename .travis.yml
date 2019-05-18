@@ -6,5 +6,6 @@ compiler:
   - gcc
 script:
   - cmake .
+  - make
   - src/vsssrv -v
   - src/vsscli -v
