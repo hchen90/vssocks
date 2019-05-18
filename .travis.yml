@@ -7,12 +7,14 @@ script:
   - make
   - src/vsssrv -v
   - src/vsscli -v
+env:
+  - COMPILER_NAME=gcc CXX=g++-5 CC=gcc-5
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-precise-3.5
+      - llvm-toolchain-precise-3.8
     packages:
-      - gcc-4.9
-      - g++-4.9
-      - clang-3.5
+      - gcc-5
+      - g++-5
+      - clang-3.8
