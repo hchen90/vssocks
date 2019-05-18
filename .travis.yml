@@ -1,4 +1,10 @@
-language: c, cpp
+install: make get-deps
+os:
+  - linux
+compiler:
+  - clang
+  - gcc
+language: cpp
 addons:
   apt:
     packages:
