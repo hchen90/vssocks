@@ -186,15 +186,12 @@ ssize_t utils::recvall(Buffer& res, int soc)
 {
   if (soc == -1) return -1;
 
-  //return recv(soc, res.ptr(), res.capacity(), 0);
-
   short len = 0;
 
   // block length (size: 2 bytes)
   ssize_t rcved = recv(soc, (char*) &len, sizeof(len), 0);
 
-  //xstring a; a.printf("\033[43mlen: %d\033[0m", len); log::info(a);
-  if (len > 0) {
+  if (rcved == sizeof(len) && len > 0) {
     res.alloc(len);
     res.reset();
 
@@ -209,12 +206,9 @@ ssize_t utils::sendall(const void* ptr, size_t len, int soc)
 {
   if (soc == -1) return -1;
 
-  //return send(soc, ptr, len, 0);
-
   short bs = (short) len;
 
   // block size
-  //xstring a; a.printf("\033[42mlen: %d\033[0m", bs); log::info(a);
   if (send(soc, (char*) &bs, sizeof(bs), 0) > 0) {
     // block data
     return send(soc, ptr, len, 0);

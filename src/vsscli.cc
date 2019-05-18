@@ -23,12 +23,13 @@
 
 #include "config.h"
 #include "proxy.h"
+#include "utils.h"
 
 using namespace std;
 
 void usage(void)
 {
-  cout  << PACKAGE_NAME << " version " << PACKAGE_VERSION << " (client-socksv5)" << endl \
+  cout  << PACKAGE_NAME << " version " << PACKAGE_VERSION << " (client)" << endl \
         << "Copyright (C) 2018 Hsiang Chen" << endl \
         << "This program may be freely redistributed under the terms of the GNU General Public License" << endl \
         << endl \
@@ -37,6 +38,7 @@ void usage(void)
         << "  -h      Display this help" << endl \
         << "  -v      Display program version" << endl \
         << "  -c      Set configuration file" << endl \
+        << "  -C      Colorize output" << endl \
         << endl \
         << "Report bugs to <" << PACKAGE_BUGREPORT << ">" << endl;
 }
@@ -65,6 +67,9 @@ int main(int argc, char* argv[])
         return 0;
       case 'c':
         cfg = optarg;
+        break;
+      case 'C':
+        log::color(true);
         break;
       case 'h':
         usage();

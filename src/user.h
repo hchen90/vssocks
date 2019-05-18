@@ -8,10 +8,8 @@
 
 #include "crypto.h"
 
-#define USER_COMPRESS   0x01
-#define USER_BANDWIDTH  0x02
-#define USER_EXPIRATION 0x04
-#define USER_PRIVATEKEY 0x08
+#define USER_COMPRESS 0x01
+#define USER_PRIKEY   0x02
 
 class Buffer;
 
@@ -30,17 +28,11 @@ public:
   const string& get_ciphername(void) const;
   const string& get_password(void) const;
   const string& get_keyfile(void) const;
-  size_t        get_bandwidth(void) const;
-  time_t        get_expiration(void) const;
 
   void set_compress(bool comp);
   void set_ciphername(const string& ciphername);
   void set_password(const string& password);
-  void set_keyfile(const string& keyfile, bool pri);
-  void set_bandwidth(size_t bawi);
-  void set_expiration(time_t expi);
-
-  bool valid(void);
+  void set_keyfile(const string& keyfile);
 private:
   string  username;
   string  userinfo;
@@ -50,8 +42,6 @@ private:
   string  ciphername;
   string  password;
   string  keyfile;
-  size_t  bandwidth;
-  time_t  expiration;
 };
 
 #endif	/* _USER_H_ */

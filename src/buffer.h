@@ -14,6 +14,7 @@ using namespace std;
 class Buffer {
 public:
   Buffer();
+  Buffer(const Buffer& buf);
   ~Buffer();
 
   bool    alloc(size_t len);
@@ -25,7 +26,7 @@ public:
   size_t  capacity(void) const;
 
   Buffer& operator += (const Buffer& buf);
-  char    operator [] (size_t ix);
+  char&   operator [] (size_t ix);
   Buffer& operator =  (const Buffer& buf);
 private:
   bool    invalid;

@@ -32,6 +32,13 @@ Buffer::Buffer() : invalid(false), mptr(NULL), mpt(NULL), len_total(BUFF_SIZE), 
   mptr = mpt = new char[len_total];
 }
 
+Buffer::Buffer(const Buffer& buf) : Buffer()
+{
+  if (alloc(buf.capacity())) {
+    app(buf.ptr(), buf.size());
+  }
+}
+
 Buffer::~Buffer()
 {
   if (mptr != NULL) {
@@ -119,12 +126,12 @@ Buffer& Buffer::operator += (const Buffer& buf)
   return *this;
 }
 
-char Buffer::operator [] (size_t ix)
+char& Buffer::operator [] (size_t ix)
 {
   if (mptr != NULL) {
     return mptr[ix];
   } else {
-    return 0;
+    return mptr[0];
   }
 }
 

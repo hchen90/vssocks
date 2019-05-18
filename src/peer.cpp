@@ -54,11 +54,9 @@ Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), oka
     timeout = atof(str.c_str());
   }
 
-  // target_ipp = get(...) // for connecting
-  remote_ipp = get("master", "remote"); // for binding
+  remote_ipp = get("master", "remote"); 
   server_ipp = get("master", "server");
-  sender_ipp = get("master", "sender");
-  recver_ipp = get("master", "recver");
+  nexsrv_ipp = get("master", "next");
 
   string def_user = get("default", "user");
 
@@ -80,58 +78,47 @@ Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), oka
   string hostip;
   int port;
 
-  if (gethostnameport(server_ipp, hostip, port)) {
-    // server endpoint
-    if (server_srv.setup(hostip, port)) {
+  // server endpoint
+  if (status & INIT_USERS && ! server_ipp.empty() && gethostnameport(server_ipp, hostip, port)) {
+    if (server_srv.setup(hostip, port) && assem_socksv5reply(server_srv, server_ipp, reply)) {
       int num = 1;
       server_srv.setsockopt(SOL_SOCKET, SO_REUSEADDR, &num, sizeof(num));
       server_srv.setsockopt(SOL_SOCKET, SO_REUSEPORT, &num, sizeof(num));
       server_srv.setsockopt(SOL_SOCKET, MSG_NOSIGNAL, &num, sizeof(num));
-      okay = true;
+      xstring msg = "Peer:Peer:server initialized on [";
+      msg.printf("%s:%u]", hostip.c_str(), port);
+      log::info(msg);
       status |= INIT_SERVER;
     }
   }
 
-  // sender client
-  if (okay && ! sender_ipp.empty() && gethostnameport(sender_ipp, hostip, port)) {
-    if (sender_cli.connect(hostip, port)) {
-      xstring msg = "Peer:Peer:sender client started on [";
-      msg.printf("%s:%u]", hostip.c_str(), (unsigned int) port);
-      log::info(msg);
-      status |= INIT_SENDER;
-    }
-  }
-
-  // recver server endpoint
-  if (okay && ! recver_ipp.empty() && gethostnameport(recver_ipp, hostip, port)) {
-    if (recver_srv.setup(hostip, port)) {
-      xstring msg = "Peer:Peer:recver server started on [";
-      msg.printf("%s:%u]", hostip.c_str(), (unsigned int) port);
-      log::info(msg);
-      status |= INIT_RECVER;
-      int num = 1;
-      recver_srv.setsockopt(SOL_SOCKET, SO_REUSEADDR, &num, sizeof(num));
-      recver_srv.setsockopt(SOL_SOCKET, SO_REUSEPORT, &num, sizeof(num));
-      recver_srv.setsockopt(SOL_SOCKET, MSG_NOSIGNAL, &num, sizeof(num));
-    }
-  }
-
   // remote server (local) for binding socket
-  if (okay && ! remote_ipp.empty() && gethostnameport(remote_ipp, hostip, port)) {
+  if (status & INIT_SERVER && ! remote_ipp.empty() && gethostnameport(remote_ipp, hostip, port)) {
     if (remote_srv.setup(hostip, port)) {
-      xstring msg = "Peer:Peer:remote server started on [";
-      msg.printf("%s:%u]", hostip.c_str(), port);
-      log::info(msg);
-      status |= INIT_REMOTE;
       int num = 1;
       server_srv.setsockopt(SOL_SOCKET, SO_REUSEADDR, &num, sizeof(num));
       server_srv.setsockopt(SOL_SOCKET, SO_REUSEPORT, &num, sizeof(num));
       server_srv.setsockopt(SOL_SOCKET, MSG_NOSIGNAL, &num, sizeof(num));
+      xstring msg = "Peer:Peer:remote server initialized on [";
+      msg.printf("%s:%u]", hostip.c_str(), port);
+      log::info(msg);
+      status |= INIT_REMOTE;
     }
   }
 
-  if (okay) {
+  // next server for quering request
+  if (status & INIT_SERVER && ! nexsrv_ipp.empty() && gethostnameport(nexsrv_ipp, hostip, port)) {
+    if (nexsrv_cli.connect(hostip, port)) {
+      xstring msg = "Peer:Peer:next server initialized on [";
+      msg.printf("%s:%u]", hostip.c_str(), port);
+      log::info(msg);
+      status |= INIT_NEXSRV;
+    }
+  }
+
+  if (status & INIT_USERS && status & INIT_SERVER) {
     log::info("Peer:Peer:peer initialized");
+    okay = true;
   }
 }
 
@@ -153,28 +140,15 @@ Peer::~Peer()
 void Peer::run(void)
 {
   if (! okay) return;
-  if (defuser == NULL) return;
 
   ThreadArgs args = {
     .which = 0,
     .peer = this
   };
 
-  pthread_t id;
-
   // start thread for server_srv
-  if (threads.create_thread(Peer::start, &args, id)) {
-    log::erro("Peer:run:create_thread(0)");
-  }
-
-  ThreadArgs argz = {
-    .which = 1,
-    .peer = this
-  };
-
-  // start thread for recver_srv
-  if (threads.create_thread(Peer::start, &argz, id)) {
-    log::erro("Peer:run:create_thread(1)");
+  if (threads.create_thread(Peer::start, &args, args.id)) {
+    log::erro("Peer:run:create_thread");
   }
 
   enter_loop();
@@ -189,10 +163,9 @@ void Peer::stop(void)
 
   threads.kill_threads();
 
-  if (status & INIT_SERVER) server_srv.close();
-  if (status & INIT_REMOTE) remote_srv.close();
-  if (status & INIT_RECVER) recver_srv.close();
-  if (status & INIT_SENDER) sender_cli.close();
+  server_srv.close();
+  remote_srv.close();
+  nexsrv_cli.close();
 
   log::info("Peer:stop:stop peer");
 }
@@ -248,12 +221,8 @@ void Peer::set_fastopen(bool fo)
       log::warn("Peer:server_srv.set_fastopen()");
     }
     
-    if (status & INIT_REMOTE && recver_srv.setsockopt(IPPROTO_TCP, TCP_FASTOPEN, &opt, sizeof(opt)) == -1) {
+    if (status & INIT_REMOTE && remote_srv.setsockopt(IPPROTO_TCP, TCP_FASTOPEN, &opt, sizeof(opt)) == -1) {
       log::warn("Peer:remote_srv.set_fastopen()");
-    }
-
-    if (status & INIT_RECVER && recver_srv.setsockopt(IPPROTO_TCP, TCP_FASTOPEN, &opt, sizeof(opt)) == -1) {
-      log::warn("Peer:recver_srv.set_fastopen()");
     }
   }
 }
@@ -267,7 +236,7 @@ void* Peer::start(void* args)
 
   if (pags->which == 0) { // server_srv
 #ifdef DEBUG
-    log::info("server_srv");
+    log::info("server_srv started");
 #endif
     Thread threads;
     fd_set fds;
@@ -314,10 +283,6 @@ void* Peer::start(void* args)
         }
       }
     }
-  } else { // recver_srv
-#ifdef DEBUG
-    log::info("recver_srv");
-#endif
   }
 
   return args;
@@ -548,11 +513,11 @@ int Peer::stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target,
       if (cli != NULL) {
         if (cli->connect(hostip, port)) {
           target = cli; rev = cmd;
-          send_status(user, soc, SOCKSV5_REP_SUCCESS, id);
+          send_status(user, soc, SOCKSV5_REP_SUCCESS, id, reply);
           msg.printf(":[%s] connected to [%s:%u]", from_ipp.c_str(), hostip.c_str(), (unsigned int) port);
         } else {
           delete cli;
-          send_status(user, soc, SOCKSV5_REP_ERROR, id);
+          send_status(user, soc, SOCKSV5_REP_ERROR, id, reply);
           msg.printf(":[%s] cannot connect to [%s:%u]", from_ipp.c_str(), hostip.c_str(), (unsigned int) port);
         }
       }
@@ -596,7 +561,7 @@ int Peer::stage_strm_connect(User* user, int soc, Socks* target, pthread_t id)
 
     switch (select(MAX(fd, soc) + 1, &fds, NULL, NULL, &tmv)) {
       case 0: // timeout
-        send_status(user, soc, SOCKSV5_REP_TTLEXPI, id);
+        send_status(user, soc, SOCKSV5_REP_TTLEXPI, id, reply);
         return 1;
       case -1: // error
         if (errno == EINTR) continue;
@@ -648,15 +613,6 @@ int Peer::stage_strm_bind(User* user, int soc, Socks* target)
 int Peer::stage_strm_udp(User* user, int soc, Socks* target)
 {
   return 0;
-}
-
-bool Peer::recver_read(int soc)
-{
-  //if (latest_clean) { // this is first time
-  //  latest_clean = false;
-  //}
-
-  return false;
 }
 
 /////////////////////////////

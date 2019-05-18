@@ -14,6 +14,5 @@
 #define BUFF_SIZE 256
 
 #undef DEBUG
-//#define DEBUG
 
 #endif	/* _CONFIG_H_ */

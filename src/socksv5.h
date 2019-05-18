@@ -6,7 +6,10 @@
 #ifndef	_SOCKSV5_H_
 #define	_SOCKSV5_H_
 
+#include <string>
+
 #include "user.h"
+#include "socks.h"
 
 #define SOCKSV5_VER '\x05'
 #define SOCKSV5_AUTHVER '\x01'
@@ -19,6 +22,7 @@
 #define SOCKSV5_CMD_CONNECT '\x01'
 #define SOCKSV5_CMD_BIND '\x02'
 #define SOCKSV5_CMD_UDP '\x03'
+#define SOCKSV5_CMD_QUERY '\x80'
 
 #define SOCKSV5_ATYP_IPV4 '\x01'
 #define SOCKSV5_ATYP_DOMAINNAME '\x03'
@@ -44,7 +48,8 @@
 #define STAGE_FINISH 3
 
 namespace std {
-  ssize_t send_status(User* user, int soc, char status, pthread_t id);
+  bool    assem_socksv5reply(Socks& srv, const string& ipp, Buffer& rep);
+  ssize_t send_status(User* user, int soc, char status, pthread_t id, const Buffer& rep);
 };
 
 #endif	/* _SOCKSV5_H_ */

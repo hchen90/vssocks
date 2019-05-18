@@ -25,12 +25,7 @@
 #define INIT_USERS  0x0001
 #define INIT_REMOTE 0x0002
 #define INIT_SERVER 0x0004
-#define INIT_SENDER 0x0008
-#define INIT_RECVER 0x0010
-#define DONE_REMOTE 0x0020
-#define DONE_SERVER 0x0040
-#define DONE_SENDER 0x0080
-#define DONE_RECVER 0x0100
+#define INIT_NEXSRV 0x0008
 
 class ThreadArgs;
 
@@ -62,17 +57,16 @@ private:
   int stage_strm_bind(User* user, int soc, Socks* target);
   int stage_strm_udp(User* user, int soc, Socks* target);
 
-  bool recver_read(int soc);
-
-  Server remote_srv; // listening on port waiting for target host incoming connection
-  Client sender_cli;
-  Server recver_srv;
-  Server server_srv; // listening for incoming client
+  /* Diagram:
+   * [A:target] <---> [B:server] <---> [C:client]
+   * */
+  Server remote_srv; // listening on port waiting for target host incoming connection (endpoint:A -> B)
+  Server server_srv; // listening for incoming client (endpoint:C -> B)
+  Client nexsrv_cli;
 
   User* defuser;
 
   map<string, User*> user_map;
-  vector<pid_t> child_vec;
 
   bool    okay;
   double  timeout;
@@ -80,10 +74,10 @@ private:
 
   string  remote_ipp;
   string  server_ipp;
-  string  sender_ipp;
-  string  recver_ipp;
+  string  nexsrv_ipp;
 
   Thread  threads;
+  Buffer  reply;
 };
 
 #endif	/* _PEER_H_ */
