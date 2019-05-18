@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pat/Documents/program/common/solutions/instance/vssocks/src
+CMAKE_SOURCE_DIR = /home/pat/Documents/program/common/solutions/instance/vssocks
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pat/Documents/program/common/solutions/instance/vssocks/src
+CMAKE_BINARY_DIR = /home/pat/Documents/program/common/solutions/instance/vssocks
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pat/Documents/program/common/solutions/instance/vssocks/src/CMakeFiles /home/pat/Documents/program/common/solutions/instance/vssocks/src/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pat/Documents/program/common/solutions/instance/vssocks/src/CMakeFiles 0
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(CMAKE_COMMAND) -E cmake_progress_start /home/pat/Documents/program/common/solutions/instance/vssocks/CMakeFiles /home/pat/Documents/program/common/solutions/instance/vssocks/src/CMakeFiles/progress.marks
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pat/Documents/program/common/solutions/instance/vssocks/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,69 +97,77 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named vsscli
+# Convenience name for target.
+src/CMakeFiles/vsscli.dir/rule:
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/vsscli.dir/rule
+.PHONY : src/CMakeFiles/vsscli.dir/rule
 
-# Build rule for target.
-vsscli: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 vsscli
+# Convenience name for target.
+vsscli: src/CMakeFiles/vsscli.dir/rule
+
 .PHONY : vsscli
 
 # fast build rule for target.
 vsscli/fast:
-	$(MAKE) -f CMakeFiles/vsscli.dir/build.make CMakeFiles/vsscli.dir/build
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsscli.dir/build.make src/CMakeFiles/vsscli.dir/build
 .PHONY : vsscli/fast
 
-#=============================================================================
-# Target rules for targets named vsssrv
+# Convenience name for target.
+src/CMakeFiles/vsssrv.dir/rule:
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/vsssrv.dir/rule
+.PHONY : src/CMakeFiles/vsssrv.dir/rule
 
-# Build rule for target.
-vsssrv: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 vsssrv
+# Convenience name for target.
+vsssrv: src/CMakeFiles/vsssrv.dir/rule
+
 .PHONY : vsssrv
 
 # fast build rule for target.
 vsssrv/fast:
-	$(MAKE) -f CMakeFiles/vsssrv.dir/build.make CMakeFiles/vsssrv.dir/build
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsssrv.dir/build.make src/CMakeFiles/vsssrv.dir/build
 .PHONY : vsssrv/fast
 
-#=============================================================================
-# Target rules for targets named vssocks
+# Convenience name for target.
+src/CMakeFiles/vssocks.dir/rule:
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/vssocks.dir/rule
+.PHONY : src/CMakeFiles/vssocks.dir/rule
 
-# Build rule for target.
-vssocks: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 vssocks
+# Convenience name for target.
+vssocks: src/CMakeFiles/vssocks.dir/rule
+
 .PHONY : vssocks
 
 # fast build rule for target.
 vssocks/fast:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/build
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/build
 .PHONY : vssocks/fast
 
-#=============================================================================
-# Target rules for targets named hdrs
+# Convenience name for target.
+src/CMakeFiles/hdrs.dir/rule:
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/hdrs.dir/rule
+.PHONY : src/CMakeFiles/hdrs.dir/rule
 
-# Build rule for target.
-hdrs: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 hdrs
+# Convenience name for target.
+hdrs: src/CMakeFiles/hdrs.dir/rule
+
 .PHONY : hdrs
 
 # fast build rule for target.
 hdrs/fast:
-	$(MAKE) -f CMakeFiles/hdrs.dir/build.make CMakeFiles/hdrs.dir/build
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/hdrs.dir/build.make src/CMakeFiles/hdrs.dir/build
 .PHONY : hdrs/fast
 
 buffer.o: buffer.cpp.o
@@ -168,7 +176,7 @@ buffer.o: buffer.cpp.o
 
 # target to build an object file
 buffer.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/buffer.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/buffer.cpp.o
 .PHONY : buffer.cpp.o
 
 buffer.i: buffer.cpp.i
@@ -177,7 +185,7 @@ buffer.i: buffer.cpp.i
 
 # target to preprocess a source file
 buffer.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/buffer.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/buffer.cpp.i
 .PHONY : buffer.cpp.i
 
 buffer.s: buffer.cpp.s
@@ -186,7 +194,7 @@ buffer.s: buffer.cpp.s
 
 # target to generate assembly for a file
 buffer.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/buffer.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/buffer.cpp.s
 .PHONY : buffer.cpp.s
 
 client.o: client.cpp.o
@@ -195,7 +203,7 @@ client.o: client.cpp.o
 
 # target to build an object file
 client.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/client.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/client.cpp.o
 .PHONY : client.cpp.o
 
 client.i: client.cpp.i
@@ -204,7 +212,7 @@ client.i: client.cpp.i
 
 # target to preprocess a source file
 client.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/client.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/client.cpp.i
 .PHONY : client.cpp.i
 
 client.s: client.cpp.s
@@ -213,7 +221,7 @@ client.s: client.cpp.s
 
 # target to generate assembly for a file
 client.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/client.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/client.cpp.s
 .PHONY : client.cpp.s
 
 conf.o: conf.cpp.o
@@ -222,7 +230,7 @@ conf.o: conf.cpp.o
 
 # target to build an object file
 conf.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/conf.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/conf.cpp.o
 .PHONY : conf.cpp.o
 
 conf.i: conf.cpp.i
@@ -231,7 +239,7 @@ conf.i: conf.cpp.i
 
 # target to preprocess a source file
 conf.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/conf.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/conf.cpp.i
 .PHONY : conf.cpp.i
 
 conf.s: conf.cpp.s
@@ -240,7 +248,7 @@ conf.s: conf.cpp.s
 
 # target to generate assembly for a file
 conf.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/conf.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/conf.cpp.s
 .PHONY : conf.cpp.s
 
 crypto.o: crypto.cpp.o
@@ -249,7 +257,7 @@ crypto.o: crypto.cpp.o
 
 # target to build an object file
 crypto.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/crypto.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/crypto.cpp.o
 .PHONY : crypto.cpp.o
 
 crypto.i: crypto.cpp.i
@@ -258,7 +266,7 @@ crypto.i: crypto.cpp.i
 
 # target to preprocess a source file
 crypto.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/crypto.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/crypto.cpp.i
 .PHONY : crypto.cpp.i
 
 crypto.s: crypto.cpp.s
@@ -267,7 +275,7 @@ crypto.s: crypto.cpp.s
 
 # target to generate assembly for a file
 crypto.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/crypto.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/crypto.cpp.s
 .PHONY : crypto.cpp.s
 
 peer.o: peer.cpp.o
@@ -276,7 +284,7 @@ peer.o: peer.cpp.o
 
 # target to build an object file
 peer.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/peer.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/peer.cpp.o
 .PHONY : peer.cpp.o
 
 peer.i: peer.cpp.i
@@ -285,7 +293,7 @@ peer.i: peer.cpp.i
 
 # target to preprocess a source file
 peer.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/peer.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/peer.cpp.i
 .PHONY : peer.cpp.i
 
 peer.s: peer.cpp.s
@@ -294,7 +302,7 @@ peer.s: peer.cpp.s
 
 # target to generate assembly for a file
 peer.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/peer.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/peer.cpp.s
 .PHONY : peer.cpp.s
 
 proxy.o: proxy.cpp.o
@@ -303,7 +311,7 @@ proxy.o: proxy.cpp.o
 
 # target to build an object file
 proxy.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/proxy.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/proxy.cpp.o
 .PHONY : proxy.cpp.o
 
 proxy.i: proxy.cpp.i
@@ -312,7 +320,7 @@ proxy.i: proxy.cpp.i
 
 # target to preprocess a source file
 proxy.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/proxy.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/proxy.cpp.i
 .PHONY : proxy.cpp.i
 
 proxy.s: proxy.cpp.s
@@ -321,7 +329,7 @@ proxy.s: proxy.cpp.s
 
 # target to generate assembly for a file
 proxy.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/proxy.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/proxy.cpp.s
 .PHONY : proxy.cpp.s
 
 server.o: server.cpp.o
@@ -330,7 +338,7 @@ server.o: server.cpp.o
 
 # target to build an object file
 server.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/server.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/server.cpp.o
 .PHONY : server.cpp.o
 
 server.i: server.cpp.i
@@ -339,7 +347,7 @@ server.i: server.cpp.i
 
 # target to preprocess a source file
 server.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/server.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/server.cpp.i
 .PHONY : server.cpp.i
 
 server.s: server.cpp.s
@@ -348,7 +356,7 @@ server.s: server.cpp.s
 
 # target to generate assembly for a file
 server.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/server.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/server.cpp.s
 .PHONY : server.cpp.s
 
 socks.o: socks.cpp.o
@@ -357,7 +365,7 @@ socks.o: socks.cpp.o
 
 # target to build an object file
 socks.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/socks.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/socks.cpp.o
 .PHONY : socks.cpp.o
 
 socks.i: socks.cpp.i
@@ -366,7 +374,7 @@ socks.i: socks.cpp.i
 
 # target to preprocess a source file
 socks.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/socks.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/socks.cpp.i
 .PHONY : socks.cpp.i
 
 socks.s: socks.cpp.s
@@ -375,7 +383,7 @@ socks.s: socks.cpp.s
 
 # target to generate assembly for a file
 socks.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/socks.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/socks.cpp.s
 .PHONY : socks.cpp.s
 
 socksv5.o: socksv5.cpp.o
@@ -384,7 +392,7 @@ socksv5.o: socksv5.cpp.o
 
 # target to build an object file
 socksv5.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/socksv5.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/socksv5.cpp.o
 .PHONY : socksv5.cpp.o
 
 socksv5.i: socksv5.cpp.i
@@ -393,7 +401,7 @@ socksv5.i: socksv5.cpp.i
 
 # target to preprocess a source file
 socksv5.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/socksv5.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/socksv5.cpp.i
 .PHONY : socksv5.cpp.i
 
 socksv5.s: socksv5.cpp.s
@@ -402,7 +410,7 @@ socksv5.s: socksv5.cpp.s
 
 # target to generate assembly for a file
 socksv5.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/socksv5.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/socksv5.cpp.s
 .PHONY : socksv5.cpp.s
 
 thread.o: thread.cpp.o
@@ -411,7 +419,7 @@ thread.o: thread.cpp.o
 
 # target to build an object file
 thread.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/thread.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/thread.cpp.o
 .PHONY : thread.cpp.o
 
 thread.i: thread.cpp.i
@@ -420,7 +428,7 @@ thread.i: thread.cpp.i
 
 # target to preprocess a source file
 thread.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/thread.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/thread.cpp.i
 .PHONY : thread.cpp.i
 
 thread.s: thread.cpp.s
@@ -429,7 +437,7 @@ thread.s: thread.cpp.s
 
 # target to generate assembly for a file
 thread.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/thread.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/thread.cpp.s
 .PHONY : thread.cpp.s
 
 user.o: user.cpp.o
@@ -438,7 +446,7 @@ user.o: user.cpp.o
 
 # target to build an object file
 user.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/user.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/user.cpp.o
 .PHONY : user.cpp.o
 
 user.i: user.cpp.i
@@ -447,7 +455,7 @@ user.i: user.cpp.i
 
 # target to preprocess a source file
 user.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/user.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/user.cpp.i
 .PHONY : user.cpp.i
 
 user.s: user.cpp.s
@@ -456,7 +464,7 @@ user.s: user.cpp.s
 
 # target to generate assembly for a file
 user.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/user.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/user.cpp.s
 .PHONY : user.cpp.s
 
 utils.o: utils.cpp.o
@@ -465,7 +473,7 @@ utils.o: utils.cpp.o
 
 # target to build an object file
 utils.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/utils.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/utils.cpp.o
 .PHONY : utils.cpp.o
 
 utils.i: utils.cpp.i
@@ -474,7 +482,7 @@ utils.i: utils.cpp.i
 
 # target to preprocess a source file
 utils.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/utils.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/utils.cpp.i
 .PHONY : utils.cpp.i
 
 utils.s: utils.cpp.s
@@ -483,7 +491,7 @@ utils.s: utils.cpp.s
 
 # target to generate assembly for a file
 utils.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/utils.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/utils.cpp.s
 .PHONY : utils.cpp.s
 
 vsscli.o: vsscli.cc.o
@@ -492,7 +500,7 @@ vsscli.o: vsscli.cc.o
 
 # target to build an object file
 vsscli.cc.o:
-	$(MAKE) -f CMakeFiles/vsscli.dir/build.make CMakeFiles/vsscli.dir/vsscli.cc.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsscli.dir/build.make src/CMakeFiles/vsscli.dir/vsscli.cc.o
 .PHONY : vsscli.cc.o
 
 vsscli.i: vsscli.cc.i
@@ -501,7 +509,7 @@ vsscli.i: vsscli.cc.i
 
 # target to preprocess a source file
 vsscli.cc.i:
-	$(MAKE) -f CMakeFiles/vsscli.dir/build.make CMakeFiles/vsscli.dir/vsscli.cc.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsscli.dir/build.make src/CMakeFiles/vsscli.dir/vsscli.cc.i
 .PHONY : vsscli.cc.i
 
 vsscli.s: vsscli.cc.s
@@ -510,7 +518,7 @@ vsscli.s: vsscli.cc.s
 
 # target to generate assembly for a file
 vsscli.cc.s:
-	$(MAKE) -f CMakeFiles/vsscli.dir/build.make CMakeFiles/vsscli.dir/vsscli.cc.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsscli.dir/build.make src/CMakeFiles/vsscli.dir/vsscli.cc.s
 .PHONY : vsscli.cc.s
 
 vsssrv.o: vsssrv.cc.o
@@ -519,7 +527,7 @@ vsssrv.o: vsssrv.cc.o
 
 # target to build an object file
 vsssrv.cc.o:
-	$(MAKE) -f CMakeFiles/vsssrv.dir/build.make CMakeFiles/vsssrv.dir/vsssrv.cc.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsssrv.dir/build.make src/CMakeFiles/vsssrv.dir/vsssrv.cc.o
 .PHONY : vsssrv.cc.o
 
 vsssrv.i: vsssrv.cc.i
@@ -528,7 +536,7 @@ vsssrv.i: vsssrv.cc.i
 
 # target to preprocess a source file
 vsssrv.cc.i:
-	$(MAKE) -f CMakeFiles/vsssrv.dir/build.make CMakeFiles/vsssrv.dir/vsssrv.cc.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsssrv.dir/build.make src/CMakeFiles/vsssrv.dir/vsssrv.cc.i
 .PHONY : vsssrv.cc.i
 
 vsssrv.s: vsssrv.cc.s
@@ -537,7 +545,7 @@ vsssrv.s: vsssrv.cc.s
 
 # target to generate assembly for a file
 vsssrv.cc.s:
-	$(MAKE) -f CMakeFiles/vsssrv.dir/build.make CMakeFiles/vsssrv.dir/vsssrv.cc.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vsssrv.dir/build.make src/CMakeFiles/vsssrv.dir/vsssrv.cc.s
 .PHONY : vsssrv.cc.s
 
 xstring.o: xstring.cpp.o
@@ -546,7 +554,7 @@ xstring.o: xstring.cpp.o
 
 # target to build an object file
 xstring.cpp.o:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/xstring.cpp.o
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/xstring.cpp.o
 .PHONY : xstring.cpp.o
 
 xstring.i: xstring.cpp.i
@@ -555,7 +563,7 @@ xstring.i: xstring.cpp.i
 
 # target to preprocess a source file
 xstring.cpp.i:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/xstring.cpp.i
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/xstring.cpp.i
 .PHONY : xstring.cpp.i
 
 xstring.s: xstring.cpp.s
@@ -564,7 +572,7 @@ xstring.s: xstring.cpp.s
 
 # target to generate assembly for a file
 xstring.cpp.s:
-	$(MAKE) -f CMakeFiles/vssocks.dir/build.make CMakeFiles/vssocks.dir/xstring.cpp.s
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(MAKE) -f src/CMakeFiles/vssocks.dir/build.make src/CMakeFiles/vssocks.dir/xstring.cpp.s
 .PHONY : xstring.cpp.s
 
 # Help Target
@@ -635,6 +643,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/pat/Documents/program/common/solutions/instance/vssocks && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -13,14 +13,6 @@
 
 #include "buffer.h"
 
-#ifndef ssize_t
-  #define ssize_t long
-#endif
-
-#ifndef size_t
-  #define size_t unsigned long
-#endif
-
 #define MAX(x00, x01) (x00 > x01 ? x00 : x01)
 #define MIN(x00, x01) (x00 < x01 ? x00 : x01)
 
