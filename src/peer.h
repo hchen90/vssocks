@@ -27,7 +27,7 @@
 #define INIT_SERVER 0x0004
 #define INIT_NEXSRV 0x0008
 
-class ThreadArgs;
+struct ThreadArgs;
 
 class Peer : public Configuration {
 public:
