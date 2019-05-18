@@ -1,10 +1,10 @@
+language: cpp
 os:
   - linux
 compiler:
   - clang
   - gcc
-language: cpp
-addons:
-  apt:
-    packages:
-      - cmake
+script:
+  - cmake .
+  - src/vsssrv -v
+  - src/vsscli -v
