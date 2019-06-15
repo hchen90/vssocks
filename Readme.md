@@ -6,4 +6,4 @@ Vssocks is SOCKS5-based proxy toolsuit, which provides more functions rather tha
 
 # Notice
 
-*Developing of this project may still on progress.*
+*Development of this project may still on progress.*
