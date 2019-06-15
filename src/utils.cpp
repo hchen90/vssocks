@@ -18,7 +18,7 @@
  * ***/
 #include <iostream>
 #include <cstring>
-
+#include <pthread.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -304,27 +304,36 @@ void log::dump(const void* ptr, size_t len)
   log::echo(str);
 }
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
 void log::echo(const string& msg)
 {
+  pthread_mutex_lock(&mutex);
   cout << "\r" << msg << endl;
+  pthread_mutex_unlock(&mutex);
 }
 
 static bool en_cr = false;
 
 void log::info(const string& msg)
 {
+  pthread_mutex_lock(&mutex);
   if (en_cr) cout << "\r- \033[32m" << msg << "\033[0m" << endl;
   else cout << "\r- " << msg << endl;
+  pthread_mutex_unlock(&mutex);
 }
 
 void log::warn(const string& msg)
 {
+  pthread_mutex_lock(&mutex);
   if (en_cr) cout << "\r! \033[33m" << msg << "\033[0m" << endl;
-  else cout << "\r! " << msg << endl;;
+  else cout << "\r! " << msg << endl;
+  pthread_mutex_unlock(&mutex);
 }
 
 void log::erro(const string& msg, bool raw)
 {
+  pthread_mutex_lock(&mutex);
   if (raw) {
     if (en_cr) cerr << "\r* \033[31m" << msg << "\033[0m" << endl;
     else cerr << "\r* " << msg << endl;
@@ -334,6 +343,7 @@ void log::erro(const string& msg, bool raw)
     if (en_cr) cerr << "\r* \033[31m" << msg << ":" << strerror(en) << " (" << en << ")" << "\033[0m" << endl;
     else cerr << "\r* " << msg << ":" << strerror(en) << " (" << en << ")" << endl;
   }
+  pthread_mutex_unlock(&mutex);
 }
 
 void log::color(bool cr)

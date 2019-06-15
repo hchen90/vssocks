@@ -14,6 +14,10 @@ public:
   bool connect(const Server& srv);
   bool connect(const string& hostip, int port);
   bool connect(const struct sockaddr* addr, socklen_t addr_len);
+  bool gethostaddr(string& hostip, int& port) const;
+private:
+  string hostip;
+  int port;
 };
 
 #endif /* _CLIENT_H_ */

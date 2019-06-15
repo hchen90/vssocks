@@ -6,8 +6,9 @@
 #ifndef	_PEER_H_
 #define	_PEER_H_
 
-#include <string>
+#include <set>
 #include <map>
+#include <string>
 
 #include "config.h"
 #include "thread.h"
@@ -54,30 +55,38 @@ private:
   int stage_auth(char* ptr, size_t len, User* user, int soc, pthread_t id);
   int stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target, const string& from_ipp, pthread_t id);
   int stage_strm_connect(User* user, int soc, Socks* target, pthread_t id);
-  int stage_strm_bind(User* user, int soc, Socks* target);
-  int stage_strm_udp(User* user, int soc, Socks* target);
+  int stage_strm_bind(User* user, int soc, Socks* target, pthread_t id);
+  int stage_strm_udp(User* user, int soc, Socks* target, pthread_t id);
+
+  int get_port(int port);
+  void del_port(int port);
 
   /* Diagram:
    * [A:target] <---> [B:server] <---> [C:client]
    * */
-  Server remote_srv; // listening on port waiting for target host incoming connection (endpoint:A -> B)
+  //Server remote_srv; // listening on port waiting for target host incoming connection (endpoint:A -> B)
   Server server_srv; // listening for incoming client (endpoint:C -> B)
   Client nexsrv_cli;
 
   User* defuser;
 
-  map<string, User*> user_map;
+  std::map<string, User*> user_map;
+  std::set<int> port_set;
 
   bool    okay;
   double  timeout;
   short   status;
+  int     mutex_okay;
 
-  string  remote_ipp;
-  string  server_ipp;
-  string  nexsrv_ipp;
+  std::pair<string, int>  server_ipp;
+  std::pair<string, int>  remote_ipp;
+  std::pair<string, int>  nexsrv_ipp;
 
   Thread  threads;
-  Buffer  reply;
+
+  Buffer  server_rep;
+
+  pthread_mutex_t mutex;
 };
 
 #endif	/* _PEER_H_ */

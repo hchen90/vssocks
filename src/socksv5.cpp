@@ -27,54 +27,51 @@
 #define STATUS_IPV6_LENGTH 22
 #define STATUS_INDEX 1
 
-bool std::assem_socksv5reply(Socks& srv, const string& ipp, Buffer& rep)
+bool std::assem_socksv5reply(Socks& srv, const string& hostip, int port, Buffer& rep)
 {
   bool ret = false;
-  string hostip; int port;
+  struct addrinfo* an = NULL;
 
-  if (utils::gethostnameport(ipp, hostip, port)) {
-    struct addrinfo* an = NULL;
-    if (! srv.resolve(hostip.c_str(), port, &an)) {
-      if (an->ai_family == AF_INET && rep.alloc(STATUS_IPV4_LENGTH)) { // IPv4
-        struct sockaddr_in* sin = (struct sockaddr_in*) an->ai_addr;
-        if (sin != NULL) {
-          unsigned char* p = (unsigned char*) rep.ptr();
-          p[0] = SOCKSV5_VER;
-          p[1] = p[2] = 0;
-          p[3] = SOCKSV5_ATYP_IPV4;
-          *(unsigned int*) (p + 4) = *(unsigned int*) &sin->sin_addr.s_addr;
-          *(unsigned short*) (p + 8) = sin->sin_port;
-          rep.resize(STATUS_IPV4_LENGTH);
-          ret = true;
-        }
-      } else if (an->ai_family == AF_INET6 && rep.alloc(STATUS_IPV6_LENGTH)) { // IPv6
-        struct sockaddr_in6* sin6 = (struct sockaddr_in6*) an->ai_addr;
-        if (sin6 != NULL) {
-          unsigned char* p = (unsigned char*) rep.ptr();
-          p[0] = SOCKSV5_VER;
-          p[1] = p[2] = 0;
-          p[3] = SOCKSV5_ATYP_IPV6;
-          memcpy(p + 4, (char*) &sin6->sin6_addr, 16);
-          *(unsigned short*) (p + 20) = sin6->sin6_port;
-          rep.resize(STATUS_IPV6_LENGTH);
-          ret = true;
-        }
-      } else { // hostname
-        unsigned char  l = hostip.size();
-        if (rep.alloc(l + 7)) {
-          unsigned char* p = (unsigned char*) rep.ptr();
-          p[0] = SOCKSV5_VER;
-          p[1] = p[2] = 0;
-          p[3] = SOCKSV5_ATYP_DOMAINNAME;
-          p[4] = l;
-          memcpy(p + 5, hostip.c_str(), l);
-          *(unsigned short*) (p + l + 5) = port;
-          rep.resize(l + 7);
-          ret = true;
-        }
+  if (! srv.resolve(hostip.c_str(), port, &an)) {
+    if (an->ai_family == AF_INET && rep.alloc(STATUS_IPV4_LENGTH)) { // IPv4
+      struct sockaddr_in* sin = (struct sockaddr_in*) an->ai_addr;
+      if (sin != NULL) {
+        unsigned char* p = (unsigned char*) rep.ptr();
+        p[0] = SOCKSV5_VER;
+        p[1] = p[2] = 0;
+        p[3] = SOCKSV5_ATYP_IPV4;
+        *(unsigned int*) (p + 4) = *(unsigned int*) &sin->sin_addr.s_addr;
+        *(unsigned short*) (p + 8) = sin->sin_port;
+        rep.resize(STATUS_IPV4_LENGTH);
+        ret = true;
       }
-      srv.resolve(NULL, 0, &an);
+    } else if (an->ai_family == AF_INET6 && rep.alloc(STATUS_IPV6_LENGTH)) { // IPv6
+      struct sockaddr_in6* sin6 = (struct sockaddr_in6*) an->ai_addr;
+      if (sin6 != NULL) {
+        unsigned char* p = (unsigned char*) rep.ptr();
+        p[0] = SOCKSV5_VER;
+        p[1] = p[2] = 0;
+        p[3] = SOCKSV5_ATYP_IPV6;
+        memcpy(p + 4, (char*) &sin6->sin6_addr, 16);
+        *(unsigned short*) (p + 20) = sin6->sin6_port;
+        rep.resize(STATUS_IPV6_LENGTH);
+        ret = true;
+      }
+    } else { // hostname
+      unsigned char  l = hostip.size();
+      if (rep.alloc(l + 7)) {
+        unsigned char* p = (unsigned char*) rep.ptr();
+        p[0] = SOCKSV5_VER;
+        p[1] = p[2] = 0;
+        p[3] = SOCKSV5_ATYP_DOMAINNAME;
+        p[4] = l;
+        memcpy(p + 5, hostip.c_str(), l);
+        *(unsigned short*) (p + l + 5) = port;
+        rep.resize(l + 7);
+        ret = true;
+      }
     }
+    srv.resolve(NULL, 0, &an);
   }
 
   return ret;

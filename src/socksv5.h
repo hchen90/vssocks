@@ -48,7 +48,7 @@
 #define STAGE_FINISH 3
 
 namespace std {
-  bool    assem_socksv5reply(Socks& srv, const string& ipp, Buffer& rep);
+  bool    assem_socksv5reply(Socks& srv, const string& hostip, int port, Buffer& rep);
   ssize_t send_status(User* user, int soc, char status, pthread_t id, const Buffer& rep);
 };
 

@@ -36,6 +36,8 @@ bool Client::connect(const string& hostip, int port)
 {
   if (hostip.empty()) return false;
 
+  this->hostip = hostip; this->port = port;
+
   struct addrinfo* addr = NULL;
 
   if (! resolve(hostip.c_str(), port, &addr)) {
@@ -59,6 +61,13 @@ bool Client::connect(const struct sockaddr* addr, socklen_t addr_len)
   }
 
   return false;
+}
+
+bool Client::gethostaddr(string& hostip, int& port) const
+{
+  hostip = this->hostip; port = this->port;
+
+  return ! hostip.empty();
 }
 
 /*end*/
