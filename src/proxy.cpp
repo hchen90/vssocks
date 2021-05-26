@@ -63,7 +63,7 @@ Proxy::Proxy(const string& conf) : Configuration(conf.c_str()), user(NULL), okay
     }
   }
 
-  string hostip; int port;
+  string hostip; int port = 0;
 
   if (! server_ipp.empty() && gethostnameport(server_ipp, hostip, port)) {
     xstring str = "Proxy:Proxy:remote server initialized on [";
