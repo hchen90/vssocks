@@ -227,9 +227,9 @@ void utils::setnonblock(int soc, bool nb)
   }
 }
 
-/*namespace: log*/
+/*namespace: logutil*/
 
-void log::dump(string& str, const void* ptr, size_t len)
+void logutil::dump(string& str, const void* ptr, size_t len)
 {
   size_t i, l;
 
@@ -295,18 +295,18 @@ void log::dump(string& str, const void* ptr, size_t len)
   }
 }
 
-void log::dump(const void* ptr, size_t len)
+void logutil::dump(const void* ptr, size_t len)
 {
   string str = "= ";
 
-  log::dump(str, ptr, len);
+  logutil::dump(str, ptr, len);
 
-  log::echo(str);
+  logutil::echo(str);
 }
 
 pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void log::echo(const string& msg)
+void logutil::echo(const string& msg)
 {
   pthread_mutex_lock(&g_mutex);
   cout << "\r" << msg << endl;
@@ -315,7 +315,7 @@ void log::echo(const string& msg)
 
 static bool en_cr = false;
 
-void log::info(const string& msg)
+void logutil::info(const string& msg)
 {
   pthread_mutex_lock(&g_mutex);
   if (en_cr) cout << "\r- \033[32m" << msg << "\033[0m" << endl;
@@ -323,7 +323,7 @@ void log::info(const string& msg)
   pthread_mutex_unlock(&g_mutex);
 }
 
-void log::warn(const string& msg)
+void logutil::warn(const string& msg)
 {
   pthread_mutex_lock(&g_mutex);
   if (en_cr) cout << "\r! \033[33m" << msg << "\033[0m" << endl;
@@ -331,7 +331,7 @@ void log::warn(const string& msg)
   pthread_mutex_unlock(&g_mutex);
 }
 
-void log::erro(const string& msg, bool raw)
+void logutil::erro(const string& msg, bool raw)
 {
   pthread_mutex_lock(&g_mutex);
   if (raw) {
@@ -346,7 +346,7 @@ void log::erro(const string& msg, bool raw)
   pthread_mutex_unlock(&g_mutex);
 }
 
-void log::color(bool cr)
+void logutil::color(bool cr)
 {
   en_cr = cr;
 }

@@ -30,7 +30,7 @@ namespace utils {
   void    setnonblock(int soc, bool nb = true);
 };
 
-namespace log {
+namespace logutil {
   void dump(string& str, const void* ptr, size_t len);
   void dump(const void* ptr, size_t len);
   void echo(const string& msg);

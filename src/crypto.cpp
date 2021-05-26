@@ -313,7 +313,7 @@ bool Crypto::set_keyfile(const string& keyfile, bool prikey)
 
     str += buf;
 
-    log::erro(str, true);
+    logutil::erro(str, true);
 
     return okay = false;
   }

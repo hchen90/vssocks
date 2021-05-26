@@ -90,7 +90,7 @@ Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), oka
       server_srv.setsockopt(SOL_SOCKET, MSG_NOSIGNAL, &num, sizeof(num));
       xstring msg = "Peer:Peer:server initialized on [";
       msg.printf("%s:%u]", hostip.c_str(), port);
-      log::info(msg);
+      logutil::info(msg);
       server_ipp.first = hostip;
       server_ipp.second = port;
       set_fastopen(fo);
@@ -102,7 +102,7 @@ Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), oka
   if (status & INIT_SERVER && ! rip.empty() && gethostnameport(rip, hostip, port)) {
     xstring msg = "Peer:Peer:remote server address set to [";
     msg.printf("%s:%u]", hostip.c_str(), port);
-    log::info(msg);
+    logutil::info(msg);
     remote_ipp.first = hostip;
     remote_ipp.second = port;
     status |= INIT_REMOTE;
@@ -113,7 +113,7 @@ Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), oka
     if (nexsrv_cli.connect(hostip, port)) {
       xstring msg = "Peer:Peer:next server initialized on [";
       msg.printf("%s:%u]", hostip.c_str(), port);
-      log::info(msg);
+      logutil::info(msg);
       nexsrv_ipp.first = hostip;
       nexsrv_ipp.second = port;
       status |= INIT_NEXSRV;
@@ -121,7 +121,7 @@ Peer::Peer(const string& conf) : Configuration(conf.c_str()), defuser(NULL), oka
   }
 
   if (status & INIT_USERS && status & INIT_SERVER) {
-    log::info("Peer:Peer:peer initialized");
+    logutil::info("Peer:Peer:peer initialized");
     okay = true;
   }
 }
@@ -156,7 +156,7 @@ void Peer::run(void)
 
   // start thread for server_srv
   if (threads.create_thread(Peer::start, &args, args.id)) {
-    log::erro("Peer:run:create_thread");
+    logutil::erro("Peer:run:create_thread");
   }
 
   enter_loop();
@@ -175,7 +175,7 @@ void Peer::stop(void)
   //remote_srv.close();
   nexsrv_cli.close();
 
-  log::info("Peer:stop:stop peer");
+  logutil::info("Peer:stop:stop peer");
 }
 
 void Peer::update_userlist(const string& usrnam, const string& usrnfo)
@@ -226,11 +226,11 @@ void Peer::set_fastopen(bool fo)
 #endif
     
     if (status & INIT_SERVER && server_srv.setsockopt(IPPROTO_TCP, TCP_FASTOPEN, &opt, sizeof(opt)) == -1) {
-      log::warn("Peer:server_srv.set_fastopen()");
+      logutil::warn("Peer:server_srv.set_fastopen()");
     }
     
     /*if (status & INIT_REMOTE && remote_srv.setsockopt(IPPROTO_TCP, TCP_FASTOPEN, &opt, sizeof(opt)) == -1) {
-      log::warn("Peer:remote_srv.set_fastopen()");
+      logutil::warn("Peer:remote_srv.set_fastopen()");
     }*/
   }
 }
@@ -244,7 +244,7 @@ void* Peer::start(void* args)
 
   if (pags->which == 0) { // server_srv
 #ifdef DEBUG
-    log::info("server_srv started");
+    logutil::info("server_srv started");
 #endif
     Thread threads;
     fd_set fds;
@@ -319,7 +319,7 @@ void* Peer::start_client(void* args)
     from_ipp = ip;
     from_ipp.printf(":%u", (unsigned int) port);
   } else {
-    log::erro("Peer:start_client:resolve()");
+    logutil::erro("Peer:start_client:resolve()");
     return args;
   }
 
@@ -331,7 +331,7 @@ void* Peer::start_client(void* args)
   int     ret;
 
   if (! res.alloc(BUFF_SIZE * 3)) {
-    log::erro("Peer:start_client:alloc()");
+    logutil::erro("Peer:start_client:alloc()");
     return args;
   }
 
@@ -455,10 +455,10 @@ int Peer::stage_auth(char* ptr, size_t len, User* user, int soc, pthread_t id)
       if (matched) {
         rev = SOCKSV5_SUCCESS;
       } else {
-        log::warn("Peer:server_read_stage_auth:authentication failed");
+        logutil::warn("Peer:server_read_stage_auth:authentication failed");
       }
     } else {
-      log::warn("Peer:server_read_stage_auth:user not found");
+      logutil::warn("Peer:server_read_stage_auth:user not found");
     }
 
     char buf[2] = { SOCKSV5_AUTHVER };
@@ -546,7 +546,7 @@ int Peer::stage_requ(char* ptr, size_t len, User* user, int soc, Socks*& target,
     }
 
     if (rev != SOCKSV5_ERROR) {
-      log::info(msg);
+      logutil::info(msg);
     }
   }
 

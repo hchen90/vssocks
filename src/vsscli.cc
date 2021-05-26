@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
         cfg = optarg;
         break;
       case 'C':
-        log::color(true);
+        logutil::color(true);
         break;
       case 'h':
         usage();

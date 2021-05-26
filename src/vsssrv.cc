@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
         cout << PACKAGE_NAME << " version " << PACKAGE_VERSION << endl;
         return 0;
       case 'C':
-        log::color(true);
+        logutil::color(true);
         break;
       case 'c':
         cfg = optarg;

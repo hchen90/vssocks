@@ -24,7 +24,7 @@
 Thread::Thread()
 {
   if((status = pthread_attr_init(&attr)) != 0) {
-    log::erro("Thread:Thread:pthread_attr_init()");
+    logutil::erro("Thread:Thread:pthread_attr_init()");
   }
 }
 

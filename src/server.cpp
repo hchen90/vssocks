@@ -56,19 +56,19 @@ bool Server::setup(const struct sockaddr* addr, socklen_t addr_len)
   if (socket(addr->sa_family, SOCK_STREAM) == -1) {
     xstring msg = "Server:setup:socket() on [";
     msg.printf("%s:%u]", hostip, (unsigned int) port);
-    log::erro(msg);
+    logutil::erro(msg);
   } else if (bind(hostip, port) == -1) {
     xstring msg = "Server:setup:bind() on [";
     msg.printf("%s:%u", hostip, (unsigned int) port);
-    log::erro(msg);
+    logutil::erro(msg);
   } else if (listen() == -1) {
     xstring msg = "Server:setup:listen() on [";
     msg.printf("%s:%u]", hostip, (unsigned int) port);
-    log::erro(msg);
+    logutil::erro(msg);
   } else {
     xstring msg = "Server:setup:server started on [";
     msg.printf("%s:%u]", hostip, (unsigned int) port);
-    log::info(msg);
+    logutil::info(msg);
     this->hostip = hostip;
     this->port = port;
     return true;

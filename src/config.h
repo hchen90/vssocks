@@ -15,8 +15,4 @@
 
 #undef DEBUG
 
-#ifndef MSG_NOSIGNAL
-#define MSG_NOSIGNAL 0
-#endif
-
 #endif	/* _CONFIG_H_ */

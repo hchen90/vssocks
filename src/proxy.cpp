@@ -68,14 +68,14 @@ Proxy::Proxy(const string& conf) : Configuration(conf.c_str()), user(NULL), okay
   if (! server_ipp.empty() && gethostnameport(server_ipp, hostip, port)) {
     xstring str = "Proxy:Proxy:remote server initialized on [";
     str.printf("%s:%u]", hostip.c_str(), (unsigned int) port);
-    log::info(str);
+    logutil::info(str);
     server_ip = hostip;
     server_port = port;
     status |= INIT_SERVER;
   } else {
     xstring str = "Proxy:Proxy:cannot connect to remote server [";
     str.printf("%s:%u]", hostip.c_str(), (unsigned int) port);
-    log::erro(str);
+    logutil::erro(str);
   }
 
   if (! local_ipp.empty() && gethostnameport(local_ipp, hostip, port)) {
@@ -145,7 +145,7 @@ void Proxy::run(void)
         xstring msg = "Proxy:run:connection from [";
         msg += hostip;
         msg.printf(":%u]", (unsigned int) port);
-        log::info(msg);
+        logutil::info(msg);
 
         ThreadArgs* tags = new ThreadArgs();
 
@@ -169,7 +169,7 @@ void Proxy::stop(void)
   if (okay) {
     threads.kill_threads();
     local.close();
-    log::info("Proxy:stop:stop proxy");
+    logutil::info("Proxy:stop:stop proxy");
   }
 }
 
@@ -188,7 +188,7 @@ void Proxy::set_fastopen(bool fo)
 #endif
 
   if (local.setsockopt(IPPROTO_TCP, TCP_FASTOPEN, &opt, sizeof(opt)) == -1) {
-    log::erro("Proxy:set_fastopen");
+    logutil::erro("Proxy:set_fastopen");
   }
 }
 
@@ -224,7 +224,7 @@ void* Proxy::start_client(void* args)
   } else {
     xstring msg = "Proxy:start_client:cannot connect to [";
     msg.printf("%s:%u]", tags->hostip.c_str(), tags->port);
-    log::erro(msg);
+    logutil::erro(msg);
   }
 
   tags->done = true;
