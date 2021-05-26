@@ -18,6 +18,7 @@
  * ***/
 #include <sys/select.h>
 #include <unistd.h>
+#include <netinet/in.h>
 
 #include <cstring>
 #include <iostream>
@@ -257,7 +258,13 @@ void* Peer::start(void* args)
 
       for (i = 0; i < count; i++) {
         pair<pthread_t, void*> pa = threads.thread_get(i);
-        if (pa.first > 0 && pa.second != NULL) {
+	bool first_b = false;
+#ifdef __linux__
+	first_b = pa.first > 0;
+#else
+	first_b = pa.first != NULL;
+#endif
+        if (first_b && pa.second != NULL) {
           ThreadArgs* tags = (ThreadArgs*) pa.second;
           if (tags->done) {
             threads.join_thread(pa.first);

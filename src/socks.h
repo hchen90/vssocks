@@ -11,6 +11,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <vector>
+#include <netinet/in.h>
 
 using namespace std;
 

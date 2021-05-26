@@ -119,7 +119,13 @@ void Proxy::run(void)
 
       for (i = 0; i < count; i++) {
         pair<pthread_t, void*> pa = threads.thread_get(i);
-        if (pa.first > 0 && pa.second != NULL) {
+	bool first_b = false;
+#ifdef __linux__
+	first_b = pa.first > 0;
+#else
+	first_b = pa.first != NULL;
+#endif
+        if (first_b && pa.second != NULL) {
           ThreadArgs* tags = (ThreadArgs*) pa.second;
           if (tags != NULL && tags->done) {
             threads.join_thread(pa.first);
