@@ -257,7 +257,11 @@ void Proxy::local_read(User* user, Client* srv, int fd1, int fd2, pthread_t id) 
     size_t to = (size_t) timeout;
     struct timeval tm = {
       .tv_sec = (time_t) to,
+#ifdef __APPLE__
+      .tv_usec = static_cast<__darwin_suseconds_t>((timeout - to) * 1000)
+#else
       .tv_usec = (time_t) (timeout - to) * 1000
+#endif
     };
 
     switch (select(MAX(fd1, fd2) + 1, &fds, NULL, NULL, &tm)) {

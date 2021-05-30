@@ -13,6 +13,10 @@
 
 #define BUFF_SIZE 256
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
 #undef DEBUG
 
 #endif	/* _CONFIG_H_ */
