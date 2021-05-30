@@ -13,7 +13,7 @@
 
 #define BUFF_SIZE 256
 
-#ifndef MSG_NOSIGNAL
+#ifdef __APPLE__
 #define MSG_NOSIGNAL 0
 #endif
 
